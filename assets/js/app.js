@@ -27,6 +27,50 @@ Hooks.PushEvent = {
     }
 }
 
+Hooks.chart = {
+    mounted() {
+        var ctx = this.el.getContext('2d');
+
+        var data = {
+            datasets: [{
+                data: [0, 0, 0],
+                backgroundColor: [
+                    '#E289F2',
+                    '#503795',
+                    '#855CF8'
+                ],
+            }],
+
+            // These labels appear in the legend and in the tooltips when hovering different arcs
+            labels: [
+                'A-I',
+                'J-R',
+                'S-Z'
+            ]
+        };
+
+        var chart = new Chart(ctx, {
+            type: 'pie',
+            data: data,
+            options: {
+                legend: {
+                    display: true,
+                    position: 'bottom',
+                    labels: {
+                        usePointStyle: true,
+                      }
+                }
+
+            }
+        });
+
+        this.handleEvent("points", ({ points }) => {
+            chart.data.datasets[0].data = points
+            chart.update()
+        })
+    }
+}
+
 let liveSocket = new LiveSocket("/live", Socket, {
     params: { _csrf_token: csrfToken },
     dom: {

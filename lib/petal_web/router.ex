@@ -19,6 +19,7 @@ defmodule PetalWeb.Router do
 
     live "/", PageLive, :index
     live "/counter", CounterLive
+    live "/analytics", AnalyticsLive
   end
 
   # Other scopes may use custom stacks.

@@ -1,0 +1,91 @@
+  <!-- Nav -->
+  <div class="bg-gray-800 p-2 mt-0 fixed w-full z-10 top-0 p-10">
+  <%= f = form_for @changeset, "#", phx_submit: "save" %>
+
+    <div class="container mx-auto flex flex-wrap items-center justify-center">
+
+          <div class="text-s">
+            <label for="name" class="block text-white">Name</label>
+            <%= text_input f, :name,
+               placeholder: "Name",
+               autocomplete: "off",
+               class: "rounded px-4 py-3 mt-2  bg-gray-100" %>
+
+            <%= error_tag f, :name %>
+          </div>
+
+          <div class="text-s mx-5">
+            <label for="quality" class="block text-white">Quality(%)</label>
+
+            <%= number_input f, :quality,
+               placeholder: "",
+               autocomplete: "off",
+               class: "rounded px-5 py-3 mt-2 focus:outline-none bg-gray-100 w-2/3" %>
+
+            <%= error_tag f, :quality %>
+          </div>
+
+
+          <%= submit "Save",
+            phx_disable_with: "Saving...",
+            class: "block shadow bg-indigo-600 hover:bg-indigo-500 focus:shadow-outline focus:outline-none text-white text-s mt-5 py-3 px-10 rounded" %>
+    </div>
+  </form>
+
+  </div>
+
+  <!-- Container -->
+  <div class="container mx-auto mt-24 px-4 sm:px-8">
+    <div class="py-24">
+      <div class="flex mb-4">
+        <!-- Left -->
+        <div class="w-1/2 h-12 px-10">
+          <div class="inline-block min-w-full shadow-lg rounded-lg overflow-hidden">
+            <!-- Table -->
+            <table class="min-w-full leading-normal">
+              <thead>
+                <tr>
+                  <th
+                    class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Name
+                  </th>
+                  <th
+                    class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Quality
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+
+              <%= for quality <- @qualities do %>
+                <tr>
+                  <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                    <p class="text-gray-900 whitespace-no-wrap text-left"><%= quality.name %></p>
+                  </td>
+                  <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                    <p class="text-gray-500 font-semibold whitespace-no-wrap text-center"><%= quality.quality %>%</p>
+                  </td>
+                </tr>
+              <% end %>
+
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- Right -->
+        <div class="w-1/2 h-12 px-10">
+          <div class="inline-block min-w-full bg-white shadow-lg rounded-lg overflow-hidden">
+            <div>
+              <p class="whitespace-no-wrap text-gray-600 text-xl py-4 px-5">Quality</p>
+              <!-- Pie Chart -->
+              <div class="flex align-items-center justify-center mt-4 mb-4" phx-update="ignore">
+                <canvas id="myChart" phx-hook="chart"></canvas>
+              </div>
+              <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
