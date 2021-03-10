@@ -25,4 +25,5 @@ config :petal, Petal.Repo,
   password: db_password,
   database: app_db,
   hostname: db_host,
+  show_sensitive_data_on_connection_error: true,
   pool_size: 10

@@ -1,20 +1,28 @@
-version: '2'
+version: '3.1'
+
 services:
-  app:
-    image: invictus/phoenix:1.5.8
-    build: .
-    ports:
-      - "4000:4000"
-    volumes:
-      - ./src:/app
+  db:
+    image: postgres:12.4
+    restart: always
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_HOST=db
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${APP_DB}
+
+  web:
+    image: petal-app
+    build: .
+    restart: always
+    ports:
+      - ${APP_PORT}:${APP_PORT}
+    environment:
+      APP_PORT: ${APP_PORT}
+      APP_HOSTNAME: ${APP_HOSTNAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_HOST: ${DB_HOST}
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE}
+      APP_DB: ${APP_DB}
+
     depends_on:
       - db
-  db:
-    image: postgres:10
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
