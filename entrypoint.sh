@@ -7,6 +7,5 @@ do
   sleep 2
 done
 
-./prod/rel/petal/bin/petal eval Petal.Release.migrate
-
-./prod/rel/petal/bin/petal start
+/app/bin/petal eval Petal.Release.migrate
+/app/bin/petal start

@@ -1,52 +1,68 @@
-# ---- Build Stage ----
-FROM elixir:alpine AS app_builder
-
-# Set environment variables for building the application
-ENV MIX_ENV=prod \
-    TEST=1 \
-    LANG=C.UTF-8
+# File: my_app/Dockerfile
+FROM elixir:alpine as build
 
 RUN apk add --update git && \
     rm -rf /var/cache/apk/*
+
+
+RUN apk add --update nodejs \
+    npm
+
 
 # Install hex and rebar
 RUN mix local.hex --force && \
     mix local.rebar --force
 
-# Create the application build directory
 RUN mkdir /app
 WORKDIR /app
 
-# Copy over all the necessary application files and directories
-COPY config ./config
-COPY lib ./lib
-COPY priv ./priv
-COPY mix.exs .
-COPY mix.lock .
+# set build ENV
+ENV MIX_ENV=prod
 
-# Fetch the application dependencies and build the application
-RUN mix deps.get
+# install mix dependencies
+COPY mix.exs mix.lock ./
+COPY config config
+RUN mix deps.get --only $MIX_ENV
 RUN mix deps.compile
-RUN mix phx.digest
-RUN mix release
 
-# ---- Application Stage ----
+# build assets
+COPY assets assets
+RUN cd assets && npm install
+RUN mix phx.digest
+
+# build project
+COPY priv priv
+COPY lib lib
+RUN mix compile
+
+# build release
+# at this point we should copy the rel directory but
+# we are not using it so we can omit it
+# COPY rel rel
+RUN mix release --overwrite
+
+# prepare release image
 FROM alpine AS app
 
-ENV LANG=C.UTF-8
-
-# Install openssl
-RUN apk add --update openssl ncurses-libs postgresql-client && \
+# install runtime dependencies
+ RUN apk add --update openssl ncurses-libs postgresql-client && \
     rm -rf /var/cache/apk/*
 
-# Copy over the build artifact from the previous step and create a non root user
-RUN adduser -D -h /home/app app
-WORKDIR /home/app
-COPY --from=app_builder /app/_build .
-RUN chown -R app: ./prod
-USER app
+
+EXPOSE 4000
+ENV MIX_ENV=prod
+
+# prepare app directory
+RUN mkdir /app
+WORKDIR /app
+
+# copy release to app container
+COPY --from=build /app/_build/prod/rel/petal .
+RUN chown -R nobody: /app
+USER nobody
+
 
 COPY entrypoint.sh .
 
-# Run the Phoenix app
-CMD ["./entrypoint.sh"]
+ENV HOME=/app
+CMD ["/app/entrypoint.sh"]
