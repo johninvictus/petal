@@ -63,7 +63,7 @@
                     <p class="text-gray-900 whitespace-no-wrap text-left"><%= quality.name %></p>
                   </td>
                   <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                    <p class="text-gray-500 font-semibold whitespace-no-wrap text-center"><%= quality.quality %>%</p>
+                    <p class="text-gray-500 font-semibold whitespace-no-wrap text-center"><%= Number.Percentage.number_to_percentage(quality.quality, precision: 0) %></p>
                   </td>
                 </tr>
               <% end %>
