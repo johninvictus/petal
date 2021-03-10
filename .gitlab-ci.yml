@@ -1,0 +1,35 @@
+variables:
+  POSTGRES_DB: petal_test
+  POSTGRES_HOST: postgres
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: "postgres"
+  MIX_ENV: "test"
+
+stage:
+  - test
+
+test_project:
+  stage: test
+  images: elixir:latest
+  services:
+    - postgres:12.4
+  
+
+  before_script:
+    - mix local.rebar --force
+    - mix local.hex --force
+    - mix deps.get --only test
+    - mix ecto.create
+    - mix ecto.migrate
+
+  script:
+    - mix test
+  cache:
+    key:
+      files:
+        - mix.lock
+    paths:
+      - deps
+
+
+
