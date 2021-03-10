@@ -8,12 +8,11 @@ variables:
 stage:
   - test
 
-test_project:
+test:
   stage: test
-  images: elixir:latest
+  image: elixir:latest
   services:
     - postgres:12.4
-  
 
   before_script:
     - mix local.rebar --force
@@ -30,6 +29,3 @@ test_project:
         - mix.lock
     paths:
       - deps
-
-
-
