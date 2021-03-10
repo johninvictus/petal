@@ -31,7 +31,7 @@ defmodule Petal.AnalyticsTest do
 
     test "create_quality/1 with valid data creates a quality" do
       assert {:ok, %Quality{} = quality} = Analytics.create_quality(@valid_attrs)
-      assert quality.name == "some name"
+      assert quality.name == "Some name"
       assert quality.quality == 42
     end
 
@@ -42,7 +42,7 @@ defmodule Petal.AnalyticsTest do
     test "update_quality/2 with valid data updates the quality" do
       quality = quality_fixture()
       assert {:ok, %Quality{} = quality} = Analytics.update_quality(quality, @update_attrs)
-      assert quality.name == "some updated name"
+      assert quality.name == "Some updated name"
       assert quality.quality == 43
     end
 
