@@ -10,11 +10,17 @@ use Mix.Config
 # which you should run after static files are built and
 # before starting your production server.
 config :petal, PetalWeb.Endpoint,
-  url: [host: "example.com", port: 80],
+  load_from_system_env: true,
+  url: [host: Application.get_env(:petal, :app_hostname), port: Application.get_env(:petal, :app_port)],
   cache_static_manifest: "priv/static/cache_manifest.json"
 
 # Do not print debug messages in production
 config :logger, level: :info
+
+
+# Which server to start per endpoint:
+#
+config :petal, PetalWeb.Endpoint, server: true
 
 # ## SSL Support
 #
@@ -52,4 +58,3 @@ config :logger, level: :info
 
 # Finally import the config/prod.secret.exs which loads secrets
 # and configuration from environment variables.
-import_config "prod.secret.exs"

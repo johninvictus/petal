@@ -42,6 +42,8 @@ defmodule PetalWeb.AnalyticsLive do
     end
   end
 
+  defp get_data_points([]), do: 0
+
   defp get_data_points(qualities) do
     total_count = Enum.reduce(qualities, 0, &(&1.quality + &2))
 
