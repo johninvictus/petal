@@ -5,7 +5,7 @@ variables:
   POSTGRES_PASSWORD: "postgres"
   MIX_ENV: "test"
 
-stage:
+stages:
   - test
 
 test:
