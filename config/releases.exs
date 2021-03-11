@@ -18,7 +18,6 @@ config :petal,
 config :petal,
   app_hostname: app_hostname
 
-
 # Configure your database
 config :petal, Petal.Repo,
   username: db_user,

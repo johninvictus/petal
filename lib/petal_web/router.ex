@@ -17,7 +17,6 @@ defmodule PetalWeb.Router do
   scope "/", PetalWeb do
     pipe_through :browser
 
-
     live "/", AnalyticsLive
     live "/page", PageLive, :index
     live "/counter", CounterLive

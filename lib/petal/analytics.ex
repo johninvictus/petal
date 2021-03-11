@@ -8,6 +8,12 @@ defmodule Petal.Analytics do
 
   alias Petal.Analytics.Quality
 
+  @analytic_topic "quality_topic"
+
+  def subscribe do
+    Phoenix.PubSub.subscribe(Petal.PubSub, @analytic_topic)
+  end
+
   @doc """
   Returns the list of qualities.
 
@@ -53,6 +59,7 @@ defmodule Petal.Analytics do
     %Quality{}
     |> Quality.changeset(attrs)
     |> Repo.insert()
+    |> broadcast(:quality_created)
   end
 
   @doc """
@@ -101,4 +108,17 @@ defmodule Petal.Analytics do
   def change_quality(%Quality{} = quality, attrs \\ %{}) do
     Quality.changeset(quality, attrs)
   end
+
+  @doc "Will broadcast success events"
+  def broadcast({:ok, quality} = data, event) do
+    Phoenix.PubSub.broadcast(
+      Petal.PubSub,
+      @analytic_topic,
+      {event, quality}
+    )
+
+    data
+  end
+
+  def broadcast({:error, _} = error, _event), do: error
 end

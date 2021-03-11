@@ -4,6 +4,8 @@ defmodule PetalWeb.AnalyticsLive do
   alias Petal.Analytics
 
   def mount(_params, _session, socket) do
+    if connected?(socket), do: Analytics.subscribe()
+
     qualities = Analytics.list_qualities()
     changeset = Analytics.change_quality(%Analytics.Quality{})
 
@@ -20,28 +22,31 @@ defmodule PetalWeb.AnalyticsLive do
 
   def handle_event("save", %{"quality" => params}, socket) do
     case Analytics.create_quality(params) do
-      {:ok, quantity} ->
-        socket =
-          update(
-            socket,
-            :qualities,
-            fn quantities -> [quantity | quantities] end
-          )
-
+      {:ok, _quantity} ->
         changeset = Analytics.change_quality(%Analytics.Quality{})
         socket = assign(socket, changeset: changeset)
 
-        {:noreply,
-         push_event(
-           socket,
-           "points",
-           %{points: get_data_points(socket.assigns.qualities)}
-         )}
+        {:noreply, socket}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         socket = assign(socket, changeset: changeset)
         {:noreply, socket}
     end
+  end
+
+  @doc "This is from the live event, pubsub"
+  def handle_info({:quality_created, quality}, socket) do
+    socket =
+      update(
+        socket,
+        :qualities,
+        fn qualities -> [quality | qualities] end
+      )
+
+    {:noreply, push_event(socket,
+      "points",
+      %{points: get_data_points(socket.assigns.qualities)}
+    )}
   end
 
   defp get_data_points([]), do: 0

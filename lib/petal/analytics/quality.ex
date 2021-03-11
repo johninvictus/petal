@@ -19,8 +19,9 @@ defmodule Petal.Analytics.Quality do
     |> capitalize_first_letter_of_name()
   end
 
-
-  defp capitalize_first_letter_of_name(%Ecto.Changeset{valid?: true, changes: %{name: name}} = changeset) do
+  defp capitalize_first_letter_of_name(
+         %Ecto.Changeset{valid?: true, changes: %{name: name}} = changeset
+       ) do
     put_change(changeset, :name, String.capitalize(name))
   end
 
