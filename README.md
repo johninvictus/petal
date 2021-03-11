@@ -7,14 +7,18 @@ To start your Phoenix server:
   * Install Node.js dependencies with `npm install` inside the `assets` directory
   * Start Phoenix endpoint with `mix phx.server`
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
 
-## Learn more
+## Running docker project.
+I have provided sample environment data inside `.env.sh` so, the first thing you need to do is load it to the terminal with this command. `source .env.sh`
 
-  * Official website: https://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Forum: https://elixirforum.com/c/phoenix-forum
-  * Source: https://github.com/phoenixframework/phoenix
+Then run docker compose with `docker-compose up`
+
+## Running release project
+If you prefer the release file, run `mix release` then load the environment variable to the terminal using `source .env.sh`. After that run the generated release using `_build/dev/rel/petal/bin/petal start`
+
+# Testing project
+In order to test the project run, `mix test`
+
+
+## NOTE: Am open for improvements with any are required.
