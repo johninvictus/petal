@@ -12,8 +12,10 @@ defmodule PetalWeb.AnalyticsLive do
         qualities: qualities,
         changeset: changeset
       )
+      |> push_event("points", %{points: get_data_points(qualities)})
 
-    {:ok, push_event(socket, "points", %{points: get_data_points(qualities)})}
+    # temporary_assigns: [qualities: []]
+    {:ok, socket}
   end
 
   def handle_event("save", %{"quality" => params}, socket) do
