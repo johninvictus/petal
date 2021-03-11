@@ -7,5 +7,8 @@ do
   sleep 2
 done
 
+
+
 /app/bin/petal eval Petal.Release.migrate
 /app/bin/petal start
+

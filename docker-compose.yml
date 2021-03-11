@@ -15,6 +15,7 @@ services:
     restart: always
     ports:
       - ${APP_PORT}:${APP_PORT}
+
     environment:
       APP_PORT: ${APP_PORT}
       APP_HOSTNAME: ${APP_HOSTNAME}

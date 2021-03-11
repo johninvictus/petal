@@ -1,20 +1,21 @@
-# File: my_app/Dockerfile
-FROM elixir:alpine as build
+FROM bitwalker/alpine-elixir-phoenix:latest AS build
 
-RUN apk add --update git && \
-    rm -rf /var/cache/apk/*
+# install build dependencies
+# RUN apk add --no-cache build-base npm git python
 
-
-RUN apk add --update nodejs \
-    npm
+RUN mix local.hex --force \
+  && mix archive.install --force hex phx_new 1.5.8
 
 
-# Install hex and rebar
+RUN curl -sL https://deb.nodesource.com/setup_14.x \
+    && apk add --update nodejs 
+
+# prepare build dir
+WORKDIR /app
+
+# install hex + rebar
 RUN mix local.hex --force && \
     mix local.rebar --force
-
-RUN mkdir /app
-WORKDIR /app
 
 # set build ENV
 ENV MIX_ENV=prod
@@ -22,47 +23,44 @@ ENV MIX_ENV=prod
 # install mix dependencies
 COPY mix.exs mix.lock ./
 COPY config config
-RUN mix deps.get --only $MIX_ENV
-RUN mix deps.compile
+RUN mix do deps.get, deps.compile
 
 # build assets
+COPY assets/package.json assets/package-lock.json ./assets/
+RUN npm --prefix ./assets ci --progress=false --no-audit --loglevel=error
+
+COPY priv priv
 COPY assets assets
-RUN cd assets && npm install
+RUN npm rebuild node-sass
+RUN npm i 
+RUN npm run --prefix ./assets deploy
 RUN mix phx.digest
 
-# build project
-COPY priv priv
+# compile and build release
 COPY lib lib
-RUN mix compile
-
-# build release
-# at this point we should copy the rel directory but
-# we are not using it so we can omit it
+# uncomment COPY if rel/ exists
 # COPY rel rel
-RUN mix release --overwrite
+RUN mix do compile, release
 
 # prepare release image
-FROM alpine AS app
+FROM alpine:3.9 AS app
+RUN apk add --no-cache openssl ncurses-libs
 
 # install runtime dependencies
- RUN apk add --update openssl ncurses-libs postgresql-client && \
+RUN apk add --update openssl ncurses-libs postgresql-client && \
     rm -rf /var/cache/apk/*
 
 
-EXPOSE 4000
-ENV MIX_ENV=prod
-
-# prepare app directory
-RUN mkdir /app
 WORKDIR /app
 
-# copy release to app container
-COPY --from=build /app/_build/prod/rel/petal .
-RUN chown -R nobody: /app
-USER nobody
+RUN chown nobody:nobody /app
 
+USER nobody:nobody
+
+COPY --from=build --chown=nobody:nobody /app/_build/prod/rel/petal ./
 
 COPY entrypoint.sh .
 
 ENV HOME=/app
-CMD ["/app/entrypoint.sh"]
+
+CMD ["/app/entrypoint.sh"]]
