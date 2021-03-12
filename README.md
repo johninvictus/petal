@@ -1,5 +1,7 @@
 # Petal
 
+![alt text](https://github.com/johninvictus/petal/blob/master/screen_shot.png?raw=true)
+
 To start your Phoenix server:
 
   * Install dependencies with `mix deps.get`
