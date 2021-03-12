@@ -1,6 +1,10 @@
-# Petal
+
 
 ![alt text](https://github.com/johninvictus/petal/blob/master/screen_shot.png?raw=true)
+
+# Petal
+
+### NOTE: The project is realtime across browsers
 
 To start your Phoenix server:
 
