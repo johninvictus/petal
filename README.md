@@ -26,5 +26,3 @@ If you prefer the release file, run `mix release` then load the environment vari
 # Testing project
 In order to test the project run, `mix test`
 
-
-## NOTE: Am open for improvements if any are required.
